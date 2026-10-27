@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "NULLWAVE"
+description = "A privacy-focused messaging web app with a polished desktop and mobile experience, honest security status, account and device controls, and real message flows."
+version = "1.0.0"
+id = "artifacts/nullwave"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23693
+
+[services.development]
+run = "pnpm --filter @workspace/nullwave run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nullwave", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/nullwave/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23693"
+BASE_PATH = "/"

@@ -1,0 +1,1429 @@
+Now check and rate this # NULLWAVE Ω — MASTER AI BUILD PROMPT
+
+## Production-Oriented Post-Quantum, Deniable, Metadata-Minimal Messaging Platform
+
+**Document type:** Full-stack engineering mandate
+**Project codename:** NULLWAVE Ω
+**Primary languages:** Rust, TypeScript
+**Cryptographic execution:** Rust native libraries and Rust-to-WebAssembly
+**Client targets:** Responsive web application and desktop application
+**Backend:** Rust services with independently deployable components
+**Security philosophy:** Evidence before claims. Reviewed constructions before custom cryptography. Working software before marketing.
+
+---
+
+# 0. YOUR ROLE AND NON-NEGOTIABLE OPERATING RULES
+
+You are the principal cryptographic engineer, Rust systems architect, application security engineer, frontend engineer, infrastructure engineer, and verification engineer responsible for delivering NULLWAVE Ω.
+
+Your task is to build a real, maintainable, testable messaging application—not a landing page, clickable mockup, simulated messenger, static dashboard, or collection of disconnected modules.
+
+You must inspect the existing repository and available development environment before changing anything. Preserve working functionality, identify existing defects, and create a baseline inventory.
+
+You must implement the application end to end, including:
+
+* Real account and device registration.
+* Cryptographic identity and key lifecycle management.
+* Asynchronous one-to-one messaging.
+* End-to-end encrypted group messaging.
+* Offline delivery and encrypted message queues.
+* Secure local message persistence.
+* Device linking and multi-device lifecycle management.
+* Post-quantum cryptographic integration.
+* Deniable authenticated key establishment where a validated construction is available.
+* Metadata-minimizing message delivery.
+* Optional two-server oblivious routing.
+* Message size padding and configurable traffic shaping.
+* Encrypted attachments.
+* Contact verification and identity-change warnings.
+* Security settings, session management, account recovery design, and device revocation.
+* Automated testing, formal models, operational monitoring, deployment automation, and security documentation.
+
+## 0.1 Mandatory implementation rules
+
+1. Never invent a cryptographic primitive or claim an unreviewed composition is secure.
+2. Never fabricate research citations, benchmark results, test results, security proofs, or audit reports.
+3. Never silently substitute an unavailable algorithm with a weaker algorithm.
+4. Never claim a feature is production-ready simply because its interface works or its code compiles.
+5. Never expose plaintext message content or private cryptographic keys to the relay backend.
+6. Never store account passwords, private keys, recovery secrets, or message contents in ordinary application logs.
+7. Never ship test keys, default administrator credentials, development backdoors, or hardcoded production secrets.
+8. Never use a JavaScript cryptographic fallback in production when the feature requires the audited Rust/WASM cryptographic boundary.
+9. Never claim that WebAssembly alone guarantees constant-time execution or protects secrets from malicious code executing in the same application origin.
+10. Never claim that metadata is completely hidden when traffic patterns, endpoint addresses, timing, or server collusion remain observable.
+11. Never bypass failing tests to achieve a green build.
+12. Never mark an incomplete feature as implemented.
+13. Never remove a security check simply because it blocks deployment.
+14. Never expose cryptographic APIs directly to untrusted UI components.
+15. Never perform an irreversible production migration, publish a release, rotate production credentials, or delete production data without the required authorization.
+
+If a requested property cannot be established, implement the safest supported alternative, clearly mark the limitation, and prevent the application from representing the stronger property as achieved.
+
+The application must remain useful even if a research-dependent feature is unavailable. Research-dependent functionality must have explicit feature gates and must not silently downgrade security.
+
+---
+
+# 1. ADVERSARY MODEL AND SECURITY OBJECTIVES
+
+Define the threat model before writing protocol implementation code.
+
+## 1.1 Adversary A — Harvest Now, Decrypt Later
+
+**Identifier:** A_HNDL
+
+The adversary records encrypted messages, handshake material, public keys, and observable metadata today, expecting to acquire more powerful cryptanalytic capabilities in the future.
+
+Objectives:
+
+* Prevent retrospective decryption of recorded messages under the declared post-quantum threat model.
+* Limit damage from compromise of long-term identity keys.
+* Ensure hybrid key establishment has an explicit security argument.
+* Specify which protocol components retain security against quantum-capable adversaries.
+* Minimize long-lived plaintext, secret, and ciphertext retention.
+
+Required analysis:
+
+* Classical versus post-quantum assumptions.
+* Historical message exposure after long-term key compromise.
+* Forward secrecy and post-compromise recovery.
+* Key rotation, rekey intervals, and missed-update behavior.
+* Backup, device migration, and recovery implications.
+* Cryptographic agility and future algorithm migration.
+
+Do not claim HNDL protection solely because ML-KEM appears somewhere in the code.
+
+## 1.2 Adversary B — Malicious Receiver
+
+**Identifier:** A_MAL_RECV
+
+The adversary receives a message and attempts to convince a third party that a particular sender authored it.
+
+The specification must distinguish:
+
+* Message confidentiality.
+* Sender authentication during the session.
+* Transcript authentication.
+* Third-party-verifiable authorship.
+* Deniability of a completed conversation.
+* Deniability after device compromise.
+* Deniability after server compromise.
+
+Define deniability formally using the actual security model of the selected construction.
+
+For every deniability claim, state:
+
+1. The adversary's capabilities.
+2. The information available to the adversary.
+3. Whether the receiver may be dishonest.
+4. Whether the distinguisher is classical or quantum.
+5. The required computational or statistical assumptions.
+6. What transcript the adversary can produce.
+7. What evidence remains available outside the cryptographic protocol.
+
+Do not equate the absence of message signatures with proven deniability.
+
+## 1.3 Adversary C — Honest-but-Curious or Malicious Infrastructure
+
+**Identifier:** A_SERVER
+
+Assume a relay operator can inspect all data stored and transmitted by the server and may correlate:
+
+* Source IP addresses.
+* Connection establishment and termination.
+* Message arrival times.
+* Message sizes.
+* Recipient-routing identifiers.
+* Delivery acknowledgements.
+* Offline polling patterns.
+* Group membership events.
+* Account and device activity.
+* Attachment sizes.
+* Retry patterns.
+
+The threat model must separately consider an honest-but-curious server, a compromised server, a malicious server, and colluding servers.
+
+The server must not be trusted for message confidentiality.
+
+The server must not be trusted to enforce identity correctness without client-verifiable evidence.
+
+For the metadata-hardened mode, document the distributed-trust assumptions and the exact information each server can observe.
+
+## 1.4 Additional adversaries
+
+Explicitly address:
+
+* A compromised endpoint.
+* Malicious application updates.
+* Malicious or compromised dependencies.
+* Network attackers.
+* Replay and message reordering.
+* Denial of service.
+* Malicious group members.
+* Account takeover.
+* Local malware and browser extensions.
+* Supply-chain compromise.
+* Malicious directory responses.
+* Quantum-capable active attackers.
+* Server collusion in the two-server mode.
+
+## 1.5 Security-goal matrix
+
+Produce a matrix containing:
+
+| Security property            | Required evidence                                               |
+| ---------------------------- | --------------------------------------------------------------- |
+| Message confidentiality      | Protocol analysis and negative tests                            |
+| Message integrity            | AEAD validation and tamper tests                                |
+| Forward secrecy              | Ratchet model and state-compromise tests                        |
+| Post-compromise security     | Recovery model and adversarial tests                            |
+| Post-quantum confidentiality | Hybrid protocol assumptions and analysis                        |
+| Deniability                  | Construction-specific formal definition and evidence            |
+| Identity correctness         | Key binding, verification, and directory consistency            |
+| Replay resistance            | State-machine and duplicate-delivery tests                      |
+| Group epoch security         | MLS analysis and selected extension evidence                    |
+| Metadata privacy             | Leakage model, implementation tests, and deployment assumptions |
+| Local secret protection      | Storage review and platform-specific tests                      |
+| Availability                 | Recovery procedures and operational testing                     |
+
+A test result is not automatically a formal proof. Label each type of evidence accurately.
+
+---
+
+# 2. RESEARCH VALIDATION AND CRYPTOGRAPHIC DEPENDENCY GATE
+
+Before implementing a mandatory research construction, verify its publication, exact version, security model, implementation availability, license, dependencies, and integration constraints.
+
+## 2.1 Primary references
+
+Use these as the initial research set:
+
+* NIST FIPS 203 — ML-KEM: https://csrc.nist.gov/pubs/fips/203/final
+* NIST FIPS 204 — ML-DSA: https://csrc.nist.gov/pubs/fips/204/final
+* NIST FIPS 205 — SLH-DSA: https://csrc.nist.gov/pubs/fips/205/final
+* NIST SP 800-227 — Recommendations for Key-Encapsulation Mechanisms: https://csrc.nist.gov/pubs/sp/800/227/final
+* RFC 9420 — Messaging Layer Security: https://www.rfc-editor.org/rfc/rfc9420
+* RFC 9180 — Hybrid Public Key Encryption: https://www.rfc-editor.org/rfc/rfc9180
+* Shadowfax — Hybrid Security and Deniability for AKEMs: https://www.usenix.org/conference/usenixsecurity26/presentation/gajland
+* Myco — Metadata-Private Messaging with Polylogarithmic Accesses: https://eprint.iacr.org/2025/687
+* OpenMLS: https://github.com/openmls/openmls
+* Tamarin Prover: https://tamarin-prover.com/
+* ProVerif: https://bblanche.gitlabpages.inria.fr/proverif/
+
+Check official errata and subsequent revisions before freezing dependency versions.
+
+## 2.2 Shadowfax integration gate
+
+Shadowfax is a mandatory research target, not permission to invent an implementation.
+
+The reported construction combines a classical non-interactive key exchange, a post-quantum KEM, and a post-quantum ring signature to pursue hybrid security and deniability.
+
+Before integrating it:
+
+1. Read the primary paper and relevant appendices.
+2. Verify the exact algorithms, parameter sets, encoding, and security definitions.
+3. Identify the published implementation and license.
+4. Verify whether the implementation is portable to the selected Rust and WASM targets.
+5. Check whether the desired security guarantees apply to the complete application handshake or only the abstract construction.
+6. Identify required assumptions for honest-receiver, dishonest-receiver, classical-distinguisher, and quantum-distinguisher cases.
+7. Produce reproducible interoperability and test-vector results.
+8. Document any changes from the published construction.
+
+Do not replace Falcon with ML-DSA, or another algorithm with a similar interface, and assume the original proof remains valid.
+
+If the research construction cannot be integrated faithfully, create a clearly labeled experimental adapter and continue developing unrelated application functionality. Do not claim production deniability.
+
+## 2.3 Myco integration gate
+
+Review the primary Myco publication and its protocol specification before implementing the metadata-hardened mode.
+
+Verify:
+
+* The precise server trust assumptions.
+* The oblivious data structure and its state transitions.
+* Client and server storage requirements.
+* Access-pattern leakage.
+* Message availability and consistency properties.
+* Communication complexity.
+* Server computation complexity.
+* Collusion resistance.
+* Failure and recovery behavior.
+* Whether the published construction supports the application's required delivery model.
+
+Do not replace the research construction with a homegrown queue and label it Myco.
+
+## 2.4 Dependency manifest
+
+Maintain a machine-readable cryptographic dependency registry.
+
+Each entry must contain:
+
+* Component identifier.
+* Exact upstream project or paper.
+* Pinned version or commit.
+* License.
+* Supported compilation targets.
+* Security properties claimed by the upstream source.
+* Known limitations and errata.
+* Audit and maintenance status.
+* Test-vector provenance.
+* Whether the dependency is experimental or production-approved.
+* Last validation date.
+
+A dependency without verified provenance must not enter the production cryptographic boundary.
+
+---
+
+# 3. SYSTEM ARCHITECTURE AND MONOREPO
+
+Use a Rust-centered monorepo with explicit separation between cryptographic state, application logic, transport, storage, and presentation.
+
+Proposed structure:
+
+```text
+nullwave/
+├── apps/
+│   ├── web/
+│   ├── desktop/
+│   └── mobile-pwa/
+├── crates/
+│   ├── nullwave-crypto/
+│   ├── nullwave-akem/
+│   ├── nullwave-session/
+│   ├── nullwave-ratchet/
+│   ├── nullwave-mls/
+│   ├── nullwave-oblivious/
+│   ├── nullwave-envelope/
+│   ├── nullwave-transport/
+│   ├── nullwave-storage/
+│   ├── nullwave-protocol/
+│   ├── nullwave-directory/
+│   ├── nullwave-api/
+│   └── nullwave-testkit/
+├── services/
+│   ├── relay/
+│   ├── directory/
+│   ├── writer/
+│   ├── reader/
+│   └── delivery-worker/
+├── formal/
+│   ├── proverif/
+│   ├── tamarin/
+│   └── assumptions/
+├── tests/
+│   ├── integration/
+│   ├── interoperability/
+│   ├── adversarial/
+│   └── performance/
+├── deploy/
+│   ├── containers/
+│   ├── development/
+│   └── production/
+├── docs/
+│   ├── architecture/
+│   ├── protocols/
+│   ├── threat-model/
+│   ├── operations/
+│   └── security/
+├── Cargo.toml
+├── Cargo.lock
+├── rust-toolchain.toml
+├── SECURITY.md
+├── CONTRIBUTING.md
+└── README.md
+```
+
+Adapt the structure to the actual repository when necessary. Do not create duplicate modules simply to match this diagram.
+
+## 3.1 Rust toolchain
+
+Use a currently available, stable, and reproducible Rust toolchain compatible with the dependency graph.
+
+The original MSRV target of Rust 1.93 or later is a constraint to validate, not a reason to invent an unavailable compiler version.
+
+Pin:
+
+* Rust toolchain.
+* Cargo dependencies.
+* WASM target configuration.
+* Frontend runtime and package-manager versions.
+* Container base images.
+* Database migration versions.
+
+Enable appropriate linting, formatting, dependency auditing, and reproducible CI builds.
+
+## 3.2 Frontend
+
+Use TypeScript with React, Svelte, or Solid according to the existing project.
+
+Implement:
+
+* Accessible responsive layouts.
+* Conversation list and message view.
+* Contact and identity verification screens.
+* Group creation and membership management.
+* Device management.
+* Secure settings.
+* Delivery status.
+* Attachment handling.
+* Privacy-mode selection.
+* Transparent security-status indicators.
+* Useful error handling for offline, expired, revoked, or inconsistent sessions.
+
+The frontend must never fabricate delivery confirmations or display security properties that have not been negotiated and verified.
+
+## 3.3 Backend
+
+Use Rust services with authenticated APIs, schema validation, explicit authorization, rate limits, bounded resource usage, and safe error handling.
+
+The relay may store opaque encrypted envelopes and the minimum delivery state required by the selected protocol.
+
+The server must never require plaintext message access to implement ordinary routing, retries, acknowledgements, or offline storage.
+
+Define every API contract before implementing both client and server. Include request validation, response schemas, failure cases, and compatibility rules.
+
+---
+
+# 4. CRYPTOGRAPHIC CORE
+
+## 4.1 Algorithm separation
+
+Use the following algorithm categories correctly:
+
+* ML-KEM-768: post-quantum key encapsulation.
+* ML-DSA-65: post-quantum digital signatures.
+* Ed25519: classical digital signatures.
+* X25519: classical Diffie–Hellman key agreement.
+* ChaCha20-Poly1305 or a suitable reviewed AEAD: symmetric authenticated encryption.
+* A reviewed cryptographic hash and KDF selected for the protocol.
+
+Select parameters according to a documented security and interoperability analysis.
+
+Do not treat signatures, key encapsulation, key derivation, and authenticated encryption as interchangeable operations.
+
+## 4.2 Hybrid key establishment
+
+Specify the exact hybrid construction, including:
+
+* Key generation.
+* Public-key distribution.
+* Transcript binding.
+* Classical and post-quantum shared-secret derivation.
+* Key confirmation.
+* Downgrade prevention.
+* Error handling.
+* Session identifiers.
+* Algorithm negotiation.
+* Identity changes.
+* Rekey behavior.
+
+Use a reviewed combiner or a construction justified by a specific security analysis.
+
+Never simply concatenate shared secrets and assume that the resulting protocol inherits all desired security properties.
+
+If one component fails, state precisely what security remains and under which assumptions.
+
+## 4.3 Identity and directory
+
+Implement identity records with explicit versioning, signed key bindings, expiration, rotation, revocation, and device lists.
+
+Clients must be able to detect identity-key changes and verify identity records independently of a single directory's assertions.
+
+Provide a mechanism for detecting inconsistent directory views, such as a suitable auditable append-only log or a validated transparency construction.
+
+Document what the transparency service can and cannot guarantee.
+
+A valid digital signature on a directory response does not, by itself, prove that the directory has not shown conflicting records to different users.
+
+## 4.4 Key storage and erasure
+
+Implement:
+
+* Encrypted persistent session state.
+* Platform-supported secure key storage where available.
+* Explicit memory-lifetime minimization.
+* Secret redaction from errors and logs.
+* Backup exclusion rules.
+* Device revocation.
+* Key rotation and destruction procedures.
+* Recovery and re-registration behavior.
+
+Never claim guaranteed physical erasure of secrets from memory unless the implementation and platform support that guarantee.
+
+---
+
+# 5. DENIABLE HANDSHAKE
+
+Implement the Shadowfax integration only after completing the research validation gate.
+
+The handshake must define:
+
+1. Initiator and responder states.
+2. Public-key and prekey discovery.
+3. Identity binding.
+4. Deniable authenticated key establishment.
+5. Transcript encoding and context binding.
+6. Shared-secret derivation.
+7. Key confirmation.
+8. Replay prevention.
+9. Downgrade prevention.
+10. Session initialization.
+11. Error and retry behavior.
+12. Key expiration and session replacement.
+
+The implementation must not add a conventional, publicly verifiable sender signature over every message or handshake transcript if doing so defeats the specified deniability goal.
+
+This does not mean all signatures are forbidden: signatures may be necessary for identity records, directory integrity, or other separately justified purposes. Document which signatures are public and what claims they establish.
+
+## 5.1 Deniability acceptance criteria
+
+The implementation must include a written deniability analysis distinguishing:
+
+* Honest receiver.
+* Dishonest receiver.
+* Classical third-party distinguisher.
+* Quantum-capable distinguisher.
+* Compromised endpoint.
+* Compromised infrastructure.
+
+If the paper proves deniability for the handshake but not for the full application transcript, state that limitation explicitly.
+
+Do not label a system "fully deniable" based only on a successful handshake test.
+
+---
+
+# 6. ONE-TO-ONE MESSAGING AND KEY EVOLUTION
+
+Implement a reviewed Double Ratchet or a clearly documented compatible design, with a separate post-quantum update mechanism where the selected protocol supports it.
+
+Do not implement a new ratchet from scratch when a suitable reviewed implementation is available.
+
+## 6.1 Message lifecycle
+
+A message must move through explicit states:
+
+* Composed locally.
+* Encrypted locally.
+* Queued for delivery.
+* Accepted by the transport.
+* Stored by the relay.
+* Delivered to the recipient device.
+* Acknowledged by the recipient.
+* Decrypted locally.
+* Optionally marked as read.
+
+These states must not be conflated. Server acceptance does not prove recipient delivery.
+
+## 6.2 Message envelope
+
+Define a versioned binary envelope containing only the fields necessary for the protocol.
+
+Specify:
+
+* Protocol version.
+* Ciphertext and AEAD tag.
+* Nonce handling.
+* Key and session identifiers.
+* Required associated data.
+* Ratchet state references.
+* Padding bucket.
+* Message sequencing or replay information.
+* Delivery-routing token.
+* Expiration policy.
+
+Avoid putting cleartext sender identities, contact lists, plaintext content, or unnecessary group membership information in outer envelopes.
+
+The exact field layout must be derived from the selected protocol rather than invented as a cryptographic construction.
+
+## 6.3 Post-quantum updates
+
+Make the update cadence configurable and measurable.
+
+The original candidate of a rekey every \(2^{20}\) records or every 24 hours may be evaluated as an initial policy, but it is not a security proof.
+
+The engineering specification must explain:
+
+* How a fresh secret is generated.
+* How it reaches the peer.
+* How old and new states coexist during delivery.
+* How skipped messages are handled.
+* How failed or duplicated updates are handled.
+* How state recovery works after compromise.
+* How rekeying affects offline devices.
+* How old secrets are retired.
+
+Implement tests for replay, message loss, reordering, delayed delivery, duplicated updates, stale state, and simultaneous updates.
+
+## 6.4 Session lifetime
+
+Use an explicit session-expiration policy, configurable by deployment.
+
+A seven-day cap may be a starting policy, but it must not be described as an inherently secure value.
+
+Expired sessions must re-establish cryptographic state through an authenticated protocol, not silently resume with stale keys.
+
+---
+
+# 7. GROUP MESSAGING AND POST-QUANTUM MLS
+
+Use RFC 9420 as the foundation for group messaging.
+
+Integrate OpenMLS or another maintained, reviewed implementation after verifying its license, maturity, supported ciphersuites, and target compatibility.
+
+Do not write TreeKEM from scratch.
+
+## 7.1 Group functionality
+
+Implement:
+
+* Group creation.
+* Member invitations.
+* Membership changes.
+* Member removal.
+* Epoch advancement.
+* Concurrent-update resolution.
+* Offline group delivery.
+* Device membership.
+* Group state persistence.
+* Recovery from stale epochs.
+* Group history policy.
+* Key-update and state-consistency tests.
+
+## 7.2 Post-quantum group support
+
+Do not assume that a classical MLS implementation becomes post-quantum secure by replacing one primitive.
+
+For each proposed post-quantum ciphersuite or TreeKEM extension, document:
+
+* Exact algorithm identifiers.
+* Wire encoding.
+* KEM composition.
+* Key derivation and domain separation.
+* Epoch-update behavior.
+* Forward secrecy.
+* Post-compromise recovery.
+* Active-attacker assumptions.
+* Interoperability constraints.
+* Security proof or explicit absence of a proof.
+
+Where the selected implementation does not support a validated post-quantum ciphersuite, keep that capability disabled and labeled experimental.
+
+Do not advertise a PQ-secure group mode until its actual group protocol supports the required security properties.
+
+---
+
+# 8. METADATA-HARDENED TWO-SERVER ROUTING
+
+Implement the Myco research target as a separate subsystem, not as a flag that merely changes API routes.
+
+## 8.1 Architecture
+
+Separate the infrastructure into:
+
+**Writer service**
+
+* Accepts protocol-compliant encrypted writes.
+* Performs its assigned oblivious-routing role.
+* Cannot decrypt message payloads.
+* Does not receive unnecessary read-side state.
+
+**Reader service**
+
+* Provides the assigned oblivious read interface.
+* Does not receive unnecessary write-side state.
+* Cannot decrypt message payloads.
+
+**Client**
+
+* Implements the validated oblivious protocol.
+* Keeps its cryptographic state locally.
+* Performs independently specified write and read operations.
+* Validates protocol responses.
+* Handles server unavailability and state recovery.
+
+The services must be independently deployable and administratively separable.
+
+## 8.2 Trust assumptions
+
+Document the consequences of:
+
+* Writer compromise.
+* Reader compromise.
+* Writer-reader collusion.
+* Network observer.
+* Client compromise.
+* Malicious server responses.
+* Timing correlation.
+* IP-address correlation.
+* Traffic volume analysis.
+* Denial of service.
+
+Do not promise metadata privacy against colluding servers if the construction assumes non-collusion.
+
+Do not claim Myco compatibility unless the actual published protocol has been implemented faithfully.
+
+## 8.3 Modes
+
+Implement clearly labeled privacy modes:
+
+**Baseline mode**
+
+* End-to-end encryption.
+* Minimum necessary relay metadata.
+* Standard delivery behavior.
+
+**Enhanced metadata mode**
+
+* Reduce cleartext routing information.
+* Apply suitable padding.
+* Reduce unnecessary identifiers and logging.
+* Document remaining access-pattern leakage.
+
+**Metadata-hardened mode**
+
+* Use the validated two-server oblivious construction.
+* Require both roles.
+* Fail closed with respect to the advertised privacy guarantee if required services or protocol prerequisites are unavailable.
+* Never silently fall back to baseline mode while retaining a metadata-hardened label.
+
+---
+
+# 9. TRAFFIC ANALYSIS RESISTANCE
+
+Implement padding and traffic shaping as measurable, configurable features.
+
+## 9.1 Bucket padding
+
+Define a bucket ladder based on realistic payload distributions and bandwidth budgets.
+
+Requirements:
+
+* Pad encrypted envelopes to the selected bucket.
+* Prevent exact plaintext-length disclosure through the envelope length.
+* Avoid obvious plaintext-dependent formatting.
+* Test every boundary between buckets.
+* Document the leakage of bucket membership.
+* Account for attachment transfer and group message sizes.
+
+Padding does not hide the exact message length if another observable channel leaks it.
+
+## 9.2 Batching and cover traffic
+
+Where the selected protocol and deployment support it, implement:
+
+* Delivery batching.
+* Configurable randomized delays.
+* Dummy traffic or loop-and-drop behavior.
+* Queue limits.
+* Backpressure.
+* Cover-traffic budgets.
+* Rate controls.
+* Resource-exhaustion protections.
+
+Do not add unbounded cover traffic that makes the service unusable or trivially vulnerable to denial of service.
+
+Define measurable latency and bandwidth trade-offs.
+
+## 9.3 Leakage report
+
+Produce a table for each mode stating whether an observer can learn:
+
+* Client IP.
+* Message timing.
+* Approximate traffic volume.
+* Padding bucket.
+* Number of active sessions.
+* Recipient-routing information.
+* Group membership changes.
+* Device activity.
+* Online/offline status.
+* Cross-session communication patterns.
+
+Use "reduced," "concealed under stated assumptions," or "not protected" as appropriate. Never use "traffic-analysis-proof."
+
+---
+
+# 10. RUST-TO-WASM CRYPTOGRAPHIC BOUNDARY
+
+The browser cryptographic core must be implemented in Rust and compiled to WebAssembly.
+
+The TypeScript interface may manage presentation and user interaction but must not implement fallback production cryptography in JavaScript.
+
+## 10.1 Module responsibilities
+
+Implement narrow, versioned interfaces for:
+
+* Key generation.
+* Hybrid key establishment.
+* Validated deniable handshake operations.
+* Session initialization.
+* Message encryption and decryption.
+* Ratchet transitions.
+* MLS operations supported by the chosen implementation.
+* Encrypted state serialization.
+* Secure state restoration.
+* Envelope creation and validation.
+* Cryptographic error reporting.
+
+Do not expose arbitrary raw-memory access or private key bytes to UI components.
+
+## 10.2 State isolation
+
+Keep cryptographic state inside the WASM module as far as the runtime permits.
+
+Use explicit handles or opaque state objects rather than returning raw private keys to TypeScript.
+
+Encrypt persistent session state before writing it to browser storage.
+
+Use WebCrypto non-extractable keys where appropriate for storage-key protection, while documenting that same-origin malicious code can still attack the application.
+
+For desktop, use appropriate operating-system credential storage or hardware-backed facilities when available.
+
+Do not imply that browser WebAssembly provides a hardware security boundary.
+
+## 10.3 WASM security requirements
+
+* Validate every input length and encoding.
+* Bound memory allocation.
+* Prevent integer overflow.
+* Avoid panics that expose secret-bearing state.
+* Do not log secret material.
+* Use audited dependencies.
+* Verify random-number generation in every target.
+* Validate all imported host functions.
+* Minimize the exposed interface.
+* Test interrupted and concurrent operations.
+* Audit the compiled WASM artifact.
+* Document side-channel limitations.
+* Provide deterministic test hooks only in test builds.
+
+Any unavailable or unsafe target-specific primitive must disable the associated production feature rather than trigger a silent JavaScript fallback.
+
+---
+
+# 11. TRANSPORT, RELAY, AND NETWORK SECURITY
+
+Use a maintained, standards-based transport with appropriate authenticated encryption and forward-secure session establishment.
+
+Do not invent a new transport handshake merely because TLS is not sufficient for the application's end-to-end threat model.
+
+Separate:
+
+1. Network transport security.
+2. Application identity authentication.
+3. End-to-end message encryption.
+4. Metadata protection.
+
+These are different layers.
+
+If a separate post-quantum-authenticated transport is required, specify its complete protocol and evidence before implementing it. Otherwise, use a reviewed transport and document its limitations.
+
+## 11.1 Transport requirements
+
+* Secure connection establishment.
+* Authentication and authorization.
+* Replay and downgrade protection.
+* Bounded frame sizes.
+* Backpressure.
+* Connection timeouts.
+* Safe reconnection.
+* Connection migration only where supported and reviewed.
+* Safe resumption only where the security model permits it.
+* Rate limiting.
+* Resource limits.
+* Encrypted transport configuration.
+* Version negotiation.
+* Protocol compatibility tests.
+
+Do not enable 0-RTT by default for state-changing operations. If resumption is used, define replay constraints and key lifecycle rules.
+
+## 11.2 Untrusted relay behavior
+
+The relay may:
+
+* Store opaque encrypted envelopes.
+* Queue messages.
+* Route delivery requests.
+* Record minimal operational state.
+* Enforce quotas.
+* Return delivery acknowledgements.
+
+The relay must not:
+
+* Decrypt message bodies.
+* Read attachment plaintext.
+* Possess client session secrets.
+* Generate client identity keys.
+* Silently alter authenticated ciphertext.
+* Forge a recipient's delivery acknowledgement.
+* Bypass identity verification.
+* Expose plaintext through debugging endpoints.
+
+Document the remaining information necessarily available to the relay.
+
+---
+
+# 12. ACCOUNTS, DEVICES, AND REAL APPLICATION FEATURES
+
+Build a complete user experience around the security protocol.
+
+## 12.1 Registration
+
+Implement account registration, device enrollment, key generation, device revocation, and recovery workflows.
+
+Do not use an ordinary server password as the encryption key for all user messages.
+
+Use an appropriate authentication design and protect against account takeover, credential stuffing, enumeration, and session fixation.
+
+## 12.2 Device linking
+
+Implement secure device enrollment using a reviewed authenticated protocol.
+
+Show the user:
+
+* New device identity.
+* Device name.
+* Verification status.
+* Enrollment time.
+* Revocation controls.
+
+Never assume that a logged-in account automatically authorizes a new device to decrypt all historical messages.
+
+## 12.3 Contacts
+
+Implement:
+
+* Contact discovery policy.
+* Public-key verification.
+* Identity-change notifications.
+* Contact blocking.
+* Session reset.
+* Device-level verification.
+* Transparent handling of expired or revoked keys.
+
+Contact discovery must not upload a user's entire address book in plaintext by default.
+
+## 12.4 Attachments
+
+Implement client-side attachment encryption, encrypted upload, opaque storage, authenticated download, bounded file sizes, and cleanup policies.
+
+Use unique content-encryption keys where appropriate and bind attachment metadata to the intended message or conversation.
+
+Do not expose plaintext attachments to the relay.
+
+## 12.5 Local persistence
+
+Implement encrypted storage for:
+
+* Message history.
+* Session state.
+* Ratchet state.
+* MLS state.
+* Attachment metadata.
+* User settings that contain sensitive information.
+
+Use atomic state transitions where possible. Prevent database rollback or stale-state restoration from silently reusing cryptographic message keys.
+
+Define deletion, retention, backup, and recovery behavior.
+
+---
+
+# 13. DATABASE AND SERVER STORAGE
+
+Choose a database based on actual requirements and supported deployment infrastructure.
+
+A relational database such as PostgreSQL may be used for account records, device registration, non-sensitive operational state, and delivery metadata. A suitable queue or object store may be used where needed.
+
+Never store private client keys or decrypted messages in the application database.
+
+Create versioned migrations, indexes, transaction boundaries, cleanup jobs, and retention policies.
+
+Enforce:
+
+* Least-privilege database roles.
+* Parameterized queries.
+* Strict schema validation.
+* Safe migration rollback strategies.
+* Backup encryption.
+* Access logging without secret leakage.
+* Bounded query and queue operations.
+* Data retention and deletion procedures.
+
+Document which fields are visible to the writer service, reader service, directory, and relay.
+
+---
+
+# 14. FORMAL VERIFICATION AND TEST ENGINEERING
+
+Formal verification is mandatory, but its scope must be honest.
+
+## 14.1 ProVerif
+
+Create models for:
+
+* Initial key establishment.
+* Authentication properties.
+* Session key secrecy.
+* Message confidentiality.
+* Replay resistance.
+* Key compromise assumptions.
+
+Use ProVerif for suitable symbolic properties and document its model assumptions.
+
+## 14.2 Tamarin
+
+Create models for:
+
+* Ratchet state transitions.
+* Forward secrecy.
+* Post-compromise recovery.
+* Key rotation.
+* Compromised identities.
+* Concurrent sessions.
+* Reordering and replay.
+* Group epoch transitions where feasible.
+
+Do not assert that unbounded ratchet proofs are automatically achievable. Demonstrate the actual model and result, and document any bounds or abstractions.
+
+## 14.3 Deniability model
+
+Create a separate model based on the exact security definition of the chosen deniable handshake.
+
+If the formal tool cannot express the desired computational or quantum property directly, state that limitation and identify the external proof or analysis required.
+
+A symbolic model that proves secrecy does not automatically prove statistical deniability.
+
+## 14.4 Implementation-to-model mapping
+
+For each modeled protocol:
+
+* Identify the Rust module implementing each modeled transition.
+* Document abstractions and omitted details.
+* Map state variables to implementation fields.
+* Identify cryptographic assumptions.
+* Document unmodeled behavior.
+* Add test cases for the modeled attacks.
+* Maintain traceability between protocol requirements and tests.
+
+## 14.5 Automated testing
+
+Implement:
+
+* Unit tests.
+* Integration tests.
+* Property-based tests.
+* Fuzzing for binary parsers.
+* Malformed-input tests.
+* Protocol interoperability tests.
+* Serialization compatibility tests.
+* State-machine tests.
+* Replay and concurrency tests.
+* Dependency and vulnerability scans.
+* WASM/browser compatibility tests.
+* Database migration tests.
+* Load and resource-exhaustion tests.
+* Recovery and disaster tests.
+
+Test malformed ciphertexts, invalid signatures, invalid KEM ciphertexts, corrupted persisted state, expired keys, revoked devices, stale epochs, and malicious server responses.
+
+A failed cryptographic verification must never be converted into a successful message delivery.
+
+---
+
+# 15. SECURITY BENCHMARKS AND PERFORMANCE
+
+Establish a reproducible benchmark suite before making performance claims.
+
+Measure:
+
+* Key generation latency.
+* Initial handshake latency.
+* Encapsulation and decapsulation latency.
+* Message encryption and decryption.
+* Ratchet transition latency.
+* PQ rekey latency.
+* MLS commit and application-message latency.
+* WASM initialization time.
+* Encrypted state persistence.
+* Cold-start and warm-start latency.
+* Metadata-hardened delivery latency.
+* Memory usage.
+* Padding overhead.
+* Cover-traffic overhead.
+* Server CPU, memory, storage, and bandwidth.
+
+Benchmark on representative desktop, mobile, and browser environments.
+
+Report distributions, including median and tail latency, with hardware, browser, compiler, dependency versions, payload sizes, and sample counts.
+
+Compare against published figures only when the implementations, hardware, and methodology are comparable.
+
+Do not promise a fixed threefold WASM performance improvement or any other speedup without measuring it in this application.
+
+Define explicit latency and resource targets after establishing the baseline.
+
+---
+
+# 16. USER INTERFACE AND SECURITY EXPERIENCE
+
+Create a professional, distinctive interface under the NULLWAVE identity.
+
+Design principles:
+
+* Privacy-focused visual language.
+* Fast conversation navigation.
+* Accessible typography and contrast.
+* Responsive mobile-first layout.
+* Clear online and delivery status.
+* Minimal unnecessary telemetry.
+* No manipulative security badges.
+* No fake verification indicators.
+* No misleading "quantum-proof" labels.
+* No hidden downgrade behavior.
+
+Provide dedicated views for:
+
+1. Sign-in and registration.
+2. Device enrollment.
+3. Conversation list.
+4. One-to-one conversations.
+5. Group conversations.
+6. Contact verification.
+7. Device management.
+8. Security and privacy settings.
+9. Message delivery diagnostics.
+10. Session recovery.
+11. Attachment management.
+12. Account deletion and data export where supported.
+
+Security status must distinguish:
+
+* End-to-end encryption active.
+* Hybrid post-quantum key establishment active.
+* Deniable handshake verified by the selected implementation.
+* Experimental post-quantum group mode.
+* Metadata-hardened routing active.
+* Privacy protection unavailable.
+* Identity changed or requires verification.
+
+Only display a status after checking the actual session configuration.
+
+---
+
+# 17. OBSERVABILITY, OPERATIONS, AND INCIDENT RESPONSE
+
+Implement operational visibility without creating a metadata collection system that undermines the product.
+
+Metrics may include:
+
+* Service availability.
+* Queue depth.
+* Delivery failure rates.
+* Latency distributions.
+* Resource consumption.
+* Protocol error categories.
+* Dependency health.
+* Database health.
+
+Avoid logging message contents, plaintext identifiers, private keys, recovery codes, raw tokens, or unnecessary network metadata.
+
+Define incident response for:
+
+* Cryptographic implementation vulnerability.
+* Compromised signing keys.
+* Directory compromise.
+* Writer or reader compromise.
+* Server collusion.
+* Malicious software updates.
+* Dependency compromise.
+* Database exposure.
+* Device theft.
+* Protocol downgrade.
+* Loss of availability.
+
+Create a security advisory process and a documented emergency disable mechanism for vulnerable experimental features.
+
+An emergency disable must not silently switch users to a weaker protocol while presenting the same security status.
+
+---
+
+# 18. DEPLOYMENT AND CI/CD
+
+Provide reproducible development and production deployment instructions.
+
+Deliver:
+
+* Container build definitions.
+* Local development environment.
+* Environment-variable templates containing placeholders only.
+* Database migrations.
+* CI build and test workflows.
+* Dependency auditing.
+* WASM build validation.
+* Artifact integrity checks.
+* Secret scanning.
+* Release versioning.
+* Health checks.
+* Backup and restore procedures.
+* Operational runbooks.
+* Rollback procedures.
+
+Use supported, maintained base images and pinned dependencies.
+
+The CI pipeline must fail when required security tests fail, an experimental feature is mistakenly enabled for production, or a required cryptographic dependency cannot be verified.
+
+Do not commit real credentials.
+
+Do not deploy externally, publish a public release, or modify production infrastructure without the appropriate authorization.
+
+---
+
+# 19. EXPLICIT RELEASE GATES
+
+A feature cannot be promoted to production merely because it exists in the repository.
+
+## Gate A — Build integrity
+
+* All required modules compile.
+* Dependency versions are pinned.
+* No unexpected fallback algorithms exist.
+* WASM and native builds pass.
+* CI artifacts are reproducible within the defined environment.
+
+## Gate B — Functional correctness
+
+* Registration and device management work.
+* Two clients can establish a session.
+* Encrypted messages can be delivered asynchronously.
+* Offline delivery works.
+* Message ordering and replay handling are tested.
+* Groups can be created and updated.
+* Encrypted attachments can be transferred.
+* Errors are handled without corrupting session state.
+
+## Gate C — Cryptographic correctness
+
+* Published test vectors pass.
+* Invalid ciphertexts are rejected.
+* Invalid signatures are rejected.
+* KDF and transcript context binding are tested.
+* Key rotation and state recovery are tested.
+* Secret material does not appear in logs.
+* Downgrade attempts are rejected.
+
+## Gate D — Research-dependent security
+
+* Shadowfax implementation provenance is verified.
+* Deniability claims match the actual construction.
+* PQ ratchet behavior is specified and tested.
+* Group ciphersuites have explicit security documentation.
+* Myco routing matches the validated construction.
+* Unsupported claims remain disabled.
+
+## Gate E — Formal and adversarial validation
+
+* Required formal models execute.
+* Results are reproducible.
+* Assumptions and omissions are documented.
+* Fuzzing and adversarial tests run.
+* Model-to-implementation mapping exists.
+* Independent security review is completed before making audited-production claims.
+
+## Gate F — Operational readiness
+
+* Deployment instructions work.
+* Secrets are managed correctly.
+* Backups and restoration are tested.
+* Monitoring avoids sensitive content.
+* Incident response is documented.
+* Resource limits and denial-of-service protections are validated.
+
+If any gate fails, report the failure and the blocking evidence. Do not change the criteria to make the build pass.
+
+---
+
+# 20. REQUIRED ENGINEERING DELIVERABLES
+
+Produce the following actual repository artifacts:
+
+1. `README.md` — installation, architecture, supported features, and honest security status.
+2. `SECURITY.md` — disclosure policy and security assumptions.
+3. `docs/architecture/system-architecture.md`
+4. `docs/architecture/trust-boundaries.md`
+5. `docs/protocols/handshake.md`
+6. `docs/protocols/ratchet.md`
+7. `docs/protocols/group-messaging.md`
+8. `docs/protocols/metadata-routing.md`
+9. `docs/threat-model/adversaries.md`
+10. `docs/threat-model/metadata-leakage.md`
+11. `docs/security/deniability-analysis.md`
+12. `docs/security/cryptographic-dependencies.md`
+13. `docs/security/key-lifecycle.md`
+14. `docs/security/known-limitations.md`
+15. `docs/operations/deployment.md`
+16. `docs/operations/incident-response.md`
+17. `formal/proverif/`
+18. `formal/tamarin/`
+19. Automated test suites.
+20. Reproducible benchmark harness.
+21. CI/CD configuration.
+22. Database migrations.
+23. Working web application.
+24. Working Rust backend services.
+25. Rust/WASM cryptographic build.
+26. An implementation-status report with evidence.
+
+Do not generate empty documents just to satisfy this checklist. Each document must contain useful, project-specific information.
+
+---
+
+# 21. IMPLEMENTATION EXECUTION ORDER
+
+Work in the following sequence.
+
+**Phase 1 — Inspect and plan**
+
+Inspect the repository, toolchain, dependencies, database, deployment environment, and existing application. Write the threat model and architecture decisions.
+
+**Phase 2 — Establish the application foundation**
+
+Build the frontend shell, API contracts, account/device lifecycle, storage layer, CI pipeline, and local development environment.
+
+**Phase 3 — Implement the cryptographic foundation**
+
+Integrate reviewed primitives and test vectors. Build the narrow Rust/WASM boundary and secure state management.
+
+**Phase 4 — Deliver one-to-one messaging**
+
+Implement session establishment, encrypted asynchronous delivery, ratchet state, offline queues, and device management.
+
+**Phase 5 — Integrate deniable post-quantum establishment**
+
+Complete the Shadowfax validation gate, implement the verified construction, and test the stated deniability model. Keep the capability experimental if required evidence is missing.
+
+**Phase 6 — Implement group messaging**
+
+Integrate reviewed MLS functionality and implement only supported ciphersuites. Do not invent a PQ TreeKEM proof.
+
+**Phase 7 — Implement privacy-enhanced delivery**
+
+Add envelope padding, batching, and the two-server metadata-protection subsystem using the validated research design.
+
+**Phase 8 — Formal verification and hardening**
+
+Complete formal models, fuzzing, security tests, performance measurements, and operational readiness checks.
+
+**Phase 9 — Release assessment**
+
+Generate a release report showing what is implemented, what is verified, what is experimental, what remains incomplete, and what requires independent audit.
+
+At the end of each phase, provide:
+
+* Files created or changed.
+* Features implemented.
+* Tests executed.
+* Actual test results.
+* Security assumptions.
+* Outstanding defects.
+* Next blocking dependency.
+
+Continue automatically through independent tasks that can be completed safely. Do not stop merely to ask permission to create ordinary project files or run local tests.
+
+Stop when a critical dependency is unavailable, an unresolved design decision could invalidate security, required authorization is missing, or a release gate fails.
+
+---
+
+# 22. FINAL REJECTION LOG
+
+Maintain a version-controlled rejection log.
+
+Every rejected design must include:
+
+* Candidate design.
+* Reason for rejection.
+* Security property at risk.
+* Supporting reference or test evidence.
+* Replacement design.
+* Remaining limitations.
+
+At minimum, evaluate:
+
+* Unreviewed custom cryptography.
+* A conventional signed-message design where it undermines deniability.
+* Pure-JavaScript production cryptography.
+* A homegrown group key tree.
+* An unvalidated post-quantum ratchet.
+* A single-server implementation marketed as two-server metadata protection.
+* Silent fallback from a stronger privacy mode.
+* Unauthenticated key directory records.
+* Long-lived unrotated session secrets.
+* Plaintext logging.
+* Unbounded cover traffic.
+* Unreviewed 0-RTT operations.
+* Fake delivery acknowledgements.
+* Hardcoded test credentials.
+* Formal models that omit essential implementation behavior.
+
+Do not reject an established protocol based on an unsupported blanket statement. Document the exact property that it does or does not provide.
+
+---
+
+# 23. FINAL RESPONSE REQUIRED FROM THE AI BUILDER
+
+After implementation, return a concise engineering report containing:
+
+**A. Actual deliverables**
+
+List the real files, services, modules, and application features created.
+
+**B. Functional status**
+
+List features that were demonstrated working end to end.
+
+**C. Test evidence**
+
+Report exact test commands, pass/fail counts, skipped tests, and failures. Never invent results.
+
+**D. Cryptographic provenance**
+
+List the actual implementations, pinned versions, parameter sets, and upstream references.
+
+**E. Security status**
+
+Separate established properties, implementation-tested properties, model-verified properties, externally reviewed properties, and unverified claims.
+
+**F. Deniability status**
+
+State the precise construction used, its proven scope, the receiver assumptions, the distinguisher assumptions, and any remaining gaps.
+
+**G. Post-quantum status**
+
+State which components are actually post-quantum, which remain classical, and which depend on hybrid security assumptions.
+
+**H. Metadata status**
+
+Explain the actual leakage under each mode, including the two-server trust assumptions and traffic-analysis limitations.
+
+**I. Deployment status**
+
+Identify what can run locally, what has been deployed with authorization, and what remains unconfigured.
+
+**J. Release verdict**
+
+Choose exactly one:
+
+* **NOT BUILDABLE:** A critical prerequisite or architecture blocker remains unresolved.
+* **BUILD IN PROGRESS:** The application exists but mandatory functionality or gates remain incomplete.
+* **FUNCTIONALLY READY FOR SECURITY REVIEW:** Required application functionality and preliminary engineering gates pass, but independent security approval remains outstanding.
+* **SECURITY-REVIEWED RELEASE CANDIDATE:** The documented release scope has passed the specified tests and received the required independent security review, with residual risks disclosed.
+
+Never use "fully secure," "unbreakable," or "quantum-proof."
+
+# FINAL DIRECTIVE
+
+Build NULLWAVE Ω as a real application with a narrow, auditable cryptographic core and explicit security boundaries.
+
+Prefer a smaller implementation with defensible guarantees over a larger implementation that simulates advanced cryptography.
+
+Deliver working software, verifiable evidence, honest limitations, reproducible builds, and a clear path to independent review.
+
+**The objective is not to claim that NULLWAVE defeats every adversary. The objective is to implement the strongest supportable architecture, demonstrate exactly what it protects against, and make unsupported security claims impossible to confuse with verified functionality.**

@@ -3,13 +3,17 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: NULLWAVE authenticated preview API. Message bodies are stored server-side and are not end-to-end encrypted.
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: security
+    description: Runtime security capability reporting
+  - name: conversations
+    description: User-owned preview conversations and messages
 paths:
   /healthz:
     get:
@@ -24,7 +28,142 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /security-status:
+    get:
+      operationId: getSecurityStatus
+      tags: [security]
+      summary: Get the active security capability status
+      responses:
+        "200":
+          description: Honest capability status for this build
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SecurityStatus"
+  /conversations:
+    get:
+      operationId: listConversations
+      tags: [conversations]
+      summary: List the signed-in user's conversations
+      responses:
+        "200":
+          description: Conversations owned by the signed-in user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      operationId: createConversation
+      tags: [conversations]
+      summary: Create a user-owned preview conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateConversationInput"
+      responses:
+        "201":
+          description: Conversation created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /conversations/{conversationId}/messages:
+    parameters:
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: listConversationMessages
+      tags: [conversations]
+      summary: List messages in a user-owned preview conversation
+      responses:
+        "200":
+          description: Messages ordered from oldest to newest
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: sendConversationMessage
+      tags: [conversations]
+      summary: Save a preview message to a user-owned conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageInput"
+      responses:
+        "201":
+          description: Message saved to the signed-in user's account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /conversations/{conversationId}:
+    parameters:
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      operationId: deleteConversation
+      tags: [conversations]
+      summary: Delete a user-owned preview conversation and its messages
+      responses:
+        "204":
+          description: Conversation and messages deleted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
+  responses:
+    BadRequest:
+      description: Request validation failed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    Unauthorized:
+      description: Authentication is required
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    NotFound:
+      description: Resource was not found or is not accessible to this user
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +172,96 @@ components:
           type: string
       required:
         - status
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    SecurityStatus:
+      type: object
+      properties:
+        releaseStage:
+          type: string
+          enum: [preview]
+        authentication:
+          type: string
+          enum: [clerk]
+        messageEncryption:
+          type: string
+          enum: [not-enabled]
+        postQuantum:
+          type: string
+          enum: [not-enabled]
+        metadataProtection:
+          type: string
+          enum: [not-enabled]
+        warning:
+          type: string
+      required:
+        - releaseStage
+        - authentication
+        - messageEncryption
+        - postQuantum
+        - metadataProtection
+        - warning
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        kind:
+          type: string
+          enum: [direct, group]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        lastMessage:
+          type: [string, "null"]
+        messageCount:
+          type: integer
+          minimum: 0
+      required: [id, title, kind, createdAt, updatedAt, lastMessage, messageCount]
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversationId:
+          type: string
+          format: uuid
+        senderId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, conversationId, senderId, content, createdAt]
+    CreateConversationInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        kind:
+          type: string
+          enum: [direct, group]
+      required: [title, kind]
+    SendMessageInput:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 4000
+      required: [content]
 

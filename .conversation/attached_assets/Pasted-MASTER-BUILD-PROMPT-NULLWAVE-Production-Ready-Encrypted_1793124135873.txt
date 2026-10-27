@@ -1,0 +1,1015 @@
+MASTER BUILD PROMPT — NULLWAVE
+
+Production-Ready Encrypted Messaging Platform, Website, and Mobile Experience
+
+You are a principal product designer, senior full-stack engineer, cybersecurity architect, and UI/UX specialist. Your mission is to design, implement, test, and deliver NULLWAVE — a premium, privacy-focused encrypted messaging platform with a futuristic cyber-tech identity.
+
+Do not produce only a mockup, static HTML page, prototype, or design concept. Build a functional application with a polished interface, real navigation, persistent data where appropriate, working messaging flows, responsive layouts, and security mechanisms that can be verified through code and tests.
+
+Use the supplied NULLWAVE reference image as the primary visual direction.
+
+⸻
+
+1. PRODUCT IDENTITY
+
+Product name: NULLWAVE
+Brand symbol: A circular speech bubble containing a padlock and flowing wave.
+Brand personality: Private, technical, premium, futuristic, trustworthy, minimalist.
+Core message: Private conversations. No traces.
+Secondary tagline: Encrypted chat for a more private tomorrow.
+
+NULLWAVE should look like a premium cybersecurity product, combining the sophistication of a professional desktop messenger with the visual quality of a modern privacy-focused consumer app.
+
+The interface must communicate security through clarity, restrained effects, consistent design, and transparent security status indicators — not through excessive visual noise.
+
+Brand colors
+
+Use this palette consistently:
+
+* Deep background: #020817
+* Primary surface: #07152D
+* Elevated surface: #0B1D3A
+* Border: #16365D
+* Electric cyan: #00D9FF
+* Bright blue: #1677FF
+* Electric violet: #7028FF
+* Soft lavender: #9E8BFF
+* Primary text: #F4F8FF
+* Secondary text: #9DB5D8
+* Success: #24D995
+* Warning: #FFBD59
+* Error: #FF647C
+
+Create a restrained cyan-to-blue-to-violet gradient for primary buttons, selected navigation items, the logo, and important accents.
+
+Avoid applying gradients to every surface. The background should remain predominantly dark navy.
+
+⸻
+
+2. DESIGN LANGUAGE
+
+Build a consistent visual system inspired by the NULLWAVE reference.
+
+Overall appearance
+
+* Dark futuristic interface with premium cybersecurity aesthetics.
+* Subtle glass-like surfaces, layered panels, and translucent highlights.
+* Thin blue borders and controlled neon illumination.
+* Soft radial glows around important elements.
+* Rounded cards, consistent corner radii, and precise spacing.
+* Crisp geometric typography with excellent readability.
+* Minimal circuit-inspired patterns and flowing wave details.
+* Clean alignment and a strong visual hierarchy.
+* Smooth, restrained transitions and micro-interactions.
+
+Effects
+
+Use CSS gradients, shadows, borders, SVG illustrations, and subtle background patterns to reproduce the visual language.
+
+Glow effects must be subtle enough that text, buttons, message bubbles, and icons remain readable.
+
+Avoid:
+
+* Excessive blur and glassmorphism.
+* Constantly animated backgrounds.
+* Oversized neon outlines around every component.
+* Excessive empty space in the actual messaging interface.
+* Tiny low-contrast text.
+* Generic dashboard templates unrelated to the reference.
+* Emoji used as a replacement for professional interface icons.
+
+Use a consistent icon library such as Lucide. Create the NULLWAVE logo as a reusable SVG component or equivalent scalable vector asset.
+
+⸻
+
+3. REQUIRED APPLICATION SURFACES
+
+Build all of the following as parts of one coherent product.
+
+1. Public marketing website.
+2. Authentication and onboarding.
+3. Desktop messaging application.
+4. Mobile messaging application.
+5. Conversation details and security information.
+6. Group messaging.
+7. Contacts and search.
+8. Device management.
+9. Account and privacy settings.
+10. Error, loading, empty, offline, and security-warning states.
+
+Every screen must use the same brand tokens, typography, iconography, components, and interaction rules.
+
+⸻
+
+4. PUBLIC LANDING PAGE
+
+Create a polished, responsive marketing homepage that introduces NULLWAVE before a user signs in.
+
+A. Navigation
+
+Place the NULLWAVE logo and wordmark at the top left.
+
+Navigation links:
+
+* Features
+* Security
+* How It Works
+* Download
+* FAQ
+
+On the right, include:
+
+* Sign In
+* Create Account
+
+Use a transparent or deep-navy navigation surface with a subtle bottom border. The navigation should remain legible as the user scrolls.
+
+On mobile, collapse the navigation into an accessible menu.
+
+B. Hero section
+
+Create a premium, visually striking hero section.
+
+Headline:
+
+Your conversations. Your privacy.
+
+Supporting copy:
+
+“Stay connected with private messaging designed around strong encryption, thoughtful security, and control over your conversations.”
+
+Primary CTA: Create Your Account
+
+Secondary CTA: Explore Security
+
+Include a large, carefully crafted NULLWAVE emblem featuring:
+
+* A chat bubble silhouette.
+* A recognizable padlock.
+* A flowing wave crossing the interior.
+* Cyan, electric blue, and violet lighting.
+* Subtle circuit traces.
+* A deep navy interior.
+
+Use a dark background with restrained cyan and violet radial glows and an optional animated wave illustration.
+
+The hero should feel premium without becoming visually cluttered.
+
+Do not invent independent audits, certifications, user counts, or security guarantees.
+
+C. Product preview
+
+Show a realistic preview of the actual application UI.
+
+Include a desktop messaging window and a mobile device preview. The preview should use the same components and design system as the working application wherever practical.
+
+Display:
+
+* Conversation list.
+* Active conversation.
+* Message bubbles.
+* Composer.
+* Online or connection indicators.
+* Conversation security details.
+
+Do not create a disconnected illustration that looks different from the actual product.
+
+D. Features section
+
+Create five feature cards:
+
+Secure Messaging
+Private conversations with clearly communicated encryption status.
+
+Private Group Chats
+Group conversations with participant and membership controls.
+
+Multi-Device Support
+Manage linked devices and sessions, with synchronization behavior accurately explained.
+
+Post-Quantum Readiness
+Use this label only if the application implements a documented, tested post-quantum or hybrid cryptographic design. Otherwise use “Security Architecture” until implemented and verified.
+
+Metadata Protection
+Explain precisely which metadata is minimized, retained, or visible to the service.
+
+Each card should contain a professional line icon, a concise title, and a short explanation.
+
+E. How it works
+
+Present a three-step flow:
+
+1. Create your account and establish your cryptographic identity.
+2. Verify contacts and start a conversation.
+3. Exchange messages using the application’s implemented encryption protocol.
+
+Use elegant numbered steps or a horizontal timeline on desktop, becoming a vertical sequence on mobile.
+
+F. Security section
+
+Create a dedicated section explaining the real security architecture.
+
+Include:
+
+* Message encryption and decryption.
+* Identity and key verification.
+* Key storage and lifecycle.
+* Device linking and revocation.
+* Transport security.
+* Backup and recovery limitations.
+* Metadata minimization.
+* Security updates and vulnerability reporting.
+
+Every security statement must be backed by implemented behavior or explicitly labeled as planned.
+
+G. Final CTA and footer
+
+Headline: Privacy should be built in.
+
+CTA: Get Started
+
+Footer links:
+
+* Privacy Policy
+* Terms of Service
+* Security
+* Documentation
+* Contact
+* GitHub, if a real repository exists
+
+Include version information and appropriate legal links. Never invent contact addresses or external destinations.
+
+⸻
+
+5. DESKTOP APPLICATION LAYOUT
+
+The desktop messaging experience is the core product. Match the reference image’s composition and proportions while adapting intelligently to different screen sizes.
+
+At large screen widths, use a three-column messaging layout:
+
+1. Navigation sidebar.
+2. Conversation list.
+3. Active conversation.
+
+Target a desktop application viewport around 1440 × 900 pixels, but make every dimension responsive.
+
+A. Main application shell
+
+Use a full-height dark navy shell with a thin border, subtle corner rounding, and restrained cyan-blue highlights.
+
+The application should occupy the available viewport without unnecessary page scrolling.
+
+Use a layout similar to:
+
+* Sidebar: approximately 210 px.
+* Conversation list: approximately 285 px.
+* Active conversation: remaining available width.
+
+These values are starting points, not fixed dimensions. Allow columns to resize or collapse as necessary.
+
+B. Left sidebar
+
+At the top, show the small NULLWAVE emblem and wordmark.
+
+Create navigation items with icons:
+
+* Chats
+* Groups
+* Contacts
+* Devices
+* Settings
+
+The selected item should have a deep-blue highlighted background, a subtle gradient accent, and a clearly visible label.
+
+Show unread message badges where applicable.
+
+At the bottom, add a security status panel with concise indicators such as:
+
+* Encryption status
+* Device status
+* Connection status
+
+These indicators must reflect actual application state. Never display “All systems secure” merely because the UI has loaded.
+
+Include the signed-in user’s avatar, display name, and presence or connection status.
+
+C. Conversation list
+
+Place a search field at the top.
+
+Each conversation row should contain:
+
+* Avatar or group avatar.
+* Conversation name.
+* Last message preview.
+* Last activity time.
+* Unread count when applicable.
+* A subtle selected-state background.
+
+Support:
+
+* Searching conversations.
+* Opening conversations.
+* Unread indicators.
+* Group conversations.
+* Empty search results.
+* Loading and offline states.
+
+Use realistic demonstration content only in demo or seeded-development mode. Never represent mock conversations as real user messages.
+
+D. Active conversation header
+
+Display:
+
+* Contact avatar.
+* Contact or group name.
+* Presence information when available.
+* Voice or video controls only if implemented.
+* Conversation details button.
+* More-actions menu.
+
+The header should be visually separated from the message history with a subtle border.
+
+Presence must not be fabricated. If presence is unavailable, display an appropriate neutral state.
+
+E. Message history
+
+Create a clean, scrollable message area with distinct incoming and outgoing bubbles.
+
+Incoming messages:
+
+* Deep-blue surface.
+* Light text.
+* Subtle border.
+* Rounded corners.
+
+Outgoing messages:
+
+* Blue-to-violet gradient.
+* High-contrast text.
+* Restrained glow.
+* Clearly aligned to the right.
+
+Each message may show:
+
+* Timestamp.
+* Delivery status, if supported.
+* Read status, if supported and permitted by user settings.
+* Attachment information.
+* Reply or reaction controls, if implemented.
+
+Support text messages, message grouping, long messages, links, and attachments.
+
+Add subtle date separators between days.
+
+Do not use exaggerated animations for each message. New messages should appear naturally and remain accessible to assistive technology.
+
+F. Conversation security card
+
+Include an optional security panel within the conversation, accessible through the header or conversation details.
+
+Show:
+
+* Encryption state.
+* Verified or unverified contact identity.
+* Current device identity.
+* Key verification action.
+* Security protocol information.
+* Relevant warnings.
+
+Example presentation:
+
+“Encrypted conversation”
+
+“Messages are protected using the configured encryption protocol.”
+
+“Verify contact identity”
+
+Only show a positive verified state when the application has actually completed the corresponding cryptographic verification.
+
+If the protocol is unavailable, the conversation is not encrypted, or verification fails, communicate that clearly and disable misleading security indicators.
+
+G. Message composer
+
+At the bottom of the active conversation, create a premium input area.
+
+Include:
+
+* Attachment control.
+* Multiline message field.
+* Emoji picker, if implemented.
+* Send button.
+* Optional voice-message control, if implemented.
+
+The composer should have a dark elevated surface, subtle border, and clear focus state.
+
+Required interactions:
+
+* Enter sends a message when appropriate.
+* Shift+Enter creates a new line on desktop.
+* Send button submits the message.
+* Empty messages cannot be sent.
+* Sending, failure, retry, and offline states are visible.
+* Keyboard focus is preserved appropriately.
+* Messages cannot be silently lost when a request fails.
+
+The mobile keyboard must not obscure the active composer.
+
+⸻
+
+6. MOBILE APPLICATION
+
+Design a genuine mobile-first experience, not merely a compressed desktop interface.
+
+Support small smartphones, larger smartphones, tablets, and responsive web installations.
+
+A. Welcome and authentication
+
+Create a mobile welcome screen with:
+
+* NULLWAVE logo.
+* Large, readable wordmark.
+* Short privacy-focused tagline.
+* Create Account button.
+* Sign In button.
+* Small feature indicators.
+
+Use a deep navy background with subtle flowing cyan and violet waves near the bottom.
+
+Keep the design elegant and lightweight. Do not make users wait for elaborate animation before they can proceed.
+
+B. Mobile navigation
+
+Use a compact bottom navigation bar for the primary destinations:
+
+* Chats
+* Groups
+* Contacts
+* Settings
+
+Devices and account controls can live within Settings.
+
+Ensure the bottom navigation does not overlap the keyboard, message composer, or system gesture area.
+
+C. Mobile chat list
+
+Each row should show:
+
+* Avatar.
+* Contact or group name.
+* Last message preview.
+* Time.
+* Unread badge.
+
+Include a top header, search field, and a clearly visible new-conversation action.
+
+D. Mobile conversation
+
+The mobile conversation screen must contain:
+
+* Compact header with back navigation.
+* Contact identity and verification access.
+* Scrollable message history.
+* Incoming and outgoing bubbles.
+* Attachment and send controls.
+* A keyboard-aware composer.
+
+Do not simply hide important desktop controls. Move secondary functionality into accessible menus.
+
+E. Mobile security and settings
+
+Create mobile-friendly screens for:
+
+* Identity verification.
+* Linked devices.
+* Session revocation.
+* Notification preferences.
+* Privacy settings.
+* Security information.
+* Account management.
+
+Use accessible touch targets and safe-area spacing.
+
+⸻
+
+7. AUTHENTICATION AND ONBOARDING
+
+Implement the complete authentication journey.
+
+Required screens:
+
+* Create Account.
+* Sign In.
+* Email verification if required by the chosen architecture.
+* Recovery or account restoration.
+* Device registration.
+* Contact verification.
+* Logout and session expiration.
+
+Show field validation, loading indicators, success feedback, and recoverable errors.
+
+Use secure server-side authentication or a properly configured authentication provider. Never store plaintext passwords or long-lived authentication secrets in insecure browser storage.
+
+If end-to-end encryption depends on client-held keys, design account recovery separately from ordinary authentication. Explain the consequences of losing recovery material.
+
+Do not silently generate a server-side master key capable of decrypting all users’ messages.
+
+⸻
+
+8. CRYPTOGRAPHY AND SECURITY REQUIREMENTS
+
+This section is mandatory.
+
+A visually convincing encryption interface is not sufficient. The security model must be documented, implemented, and tested.
+
+A. Cryptographic architecture
+
+Use established, maintained cryptographic libraries and published protocols. Do not invent custom encryption algorithms.
+
+If Rust is the backend language, keep security-critical server functionality in Rust where appropriate.
+
+Use WebAssembly for browser-side cryptographic operations only when the selected libraries, platform support, and implementation architecture justify it.
+
+Choose a documented end-to-end encryption protocol suitable for the application’s requirements, including multi-device and group messaging where supported.
+
+Document:
+
+* Identity keys.
+* Session establishment.
+* Message encryption and authentication.
+* Key rotation.
+* Replay protection.
+* Forward secrecy properties.
+* Device addition and removal.
+* Group membership changes.
+* Recovery limitations.
+* Threat model and out-of-scope threats.
+
+Use post-quantum or hybrid key establishment only with recognized, maintained implementations and a documented protocol design. Do not claim that a particular algorithm makes the entire product quantum-proof.
+
+B. Key handling
+
+* Generate keys using cryptographically secure randomness.
+* Keep private keys under client control where the threat model requires it.
+* Use platform-supported secure storage when available.
+* Never expose private keys through logs, analytics, error messages, or debugging endpoints.
+* Prevent secrets from entering URLs.
+* Avoid plaintext messages in persistent browser storage unless explicitly justified and protected by the documented threat model.
+* Implement key replacement and revocation behavior.
+* Handle device loss and account recovery honestly.
+* Avoid creating a centralized decryption capability that contradicts the product’s security promises.
+
+C. Transport and server security
+
+Use TLS for network communications.
+
+Apply:
+
+* Authorization checks on every protected resource.
+* Strict session management.
+* Input validation.
+* Rate limiting.
+* Secure secret management.
+* Appropriate security headers.
+* Origin and cross-site request protections.
+* Dependency auditing.
+* Structured security logging without sensitive message content.
+* Safe error handling.
+* Database access controls.
+* Protection against injection and unauthorized object access.
+
+The server should handle ciphertext rather than plaintext for end-to-end encrypted messages, except for explicitly documented features that require different treatment.
+
+Do not claim that metadata is eliminated if the server still processes account identifiers, IP addresses, timestamps, delivery information, or other operational metadata.
+
+D. Honest security states
+
+The interface must distinguish between:
+
+* Encrypted in transit.
+* End-to-end encrypted.
+* Contact identity verified.
+* Device trusted.
+* Session expired.
+* Verification required.
+* Encryption unavailable.
+* Security warning.
+
+These states are not interchangeable.
+
+If encryption is not initialized or a cryptographic operation fails, do not silently fall back to plaintext while showing a secure indicator.
+
+If a secure messaging feature is not implemented, mark it as unavailable or under development rather than simulating success.
+
+⸻
+
+9. BACKEND, DATABASE, AND REAL-TIME MESSAGING
+
+Build the actual application architecture, not just the frontend.
+
+Use the existing repository’s stack if one exists. Otherwise, choose a maintainable architecture such as:
+
+* Frontend: React with TypeScript and a suitable modern framework.
+* Styling: Tailwind CSS or an equivalent reusable styling system.
+* Backend: Rust using a maintained web framework such as Axum.
+* Database: PostgreSQL.
+* Real-time delivery: WebSockets or another suitable authenticated transport.
+* Cryptography: Established, maintained cryptographic libraries selected for the documented protocol.
+* Testing: Unit, integration, end-to-end, and security-focused tests.
+
+Do not add every technology simply because it appears in this list. Make the stack coherent, explain key choices, and pin compatible dependency versions.
+
+Implement real backend flows for:
+
+* Account creation and authentication.
+* User profiles.
+* Contact discovery according to the privacy model.
+* Conversations and group membership.
+* Encrypted message submission.
+* Authenticated message delivery.
+* Message persistence according to the retention policy.
+* Device registration and revocation.
+* Notifications where supported.
+* Connection status and reconnect behavior.
+
+Use database migrations, indexes, validation, and transaction handling where appropriate.
+
+Protect conversation history and attachment access with explicit authorization checks. A user must not access another user’s conversations by changing an identifier in a request.
+
+WebSocket connections must be authenticated and authorized. Recheck access when membership or session status changes.
+
+Implement reconnection, retry, duplicate prevention, and delivery acknowledgments where applicable.
+
+Do not pretend that multi-device synchronization is secure merely because the same account can sign in on multiple devices.
+
+⸻
+
+10. ATTACHMENTS, SEARCH, AND GROUPS
+
+Attachments
+
+Build an attachment flow with:
+
+* File selection.
+* File type and size validation.
+* Upload progress.
+* Download state.
+* Failure and retry handling.
+
+If attachment encryption is supported, encrypt files using an appropriate authenticated encryption scheme and protect their keys according to the documented protocol.
+
+Never expose sensitive attachment keys in public URLs or logs.
+
+Search
+
+Provide conversation search and contact search.
+
+Clearly distinguish local plaintext search from server-side search. If end-to-end encryption prevents the server from reading message contents, do not implement server-side plaintext indexing that contradicts this property.
+
+Groups
+
+Support:
+
+* Group creation.
+* Participant management.
+* Group information.
+* Member removal.
+* Membership changes.
+* Group-specific cryptographic state where supported.
+
+When group membership changes, ensure that key distribution and future message access follow the documented protocol.
+
+⸻
+
+11. SETTINGS AND DEVICE MANAGEMENT
+
+Build a complete settings area with the same visual design.
+
+Sections:
+
+Account
+
+* Profile details.
+* Display name.
+* Account security.
+
+Privacy
+
+* Presence visibility.
+* Read receipts.
+* Notification previews.
+* Contact discovery preferences.
+
+Security
+
+* Encryption information.
+* Identity verification.
+* Active sessions.
+* Recovery options.
+* Security alerts.
+
+Devices
+
+* Current device.
+* Linked devices.
+* Last activity, when available.
+* Device removal.
+* Session revocation.
+
+Appearance
+
+* Dark theme as the default.
+* Accent preferences if supported.
+* Motion preferences.
+
+Notifications
+
+* Message notifications.
+* Group notifications.
+* Quiet hours if implemented.
+
+About
+
+* Application version.
+* Privacy policy.
+* Terms.
+* Security documentation.
+* Vulnerability reporting information.
+
+Every setting must either function or be explicitly labeled as unavailable. Never create controls that appear to work but do nothing.
+
+⸻
+
+12. REUSABLE DESIGN SYSTEM
+
+Create a maintainable component library.
+
+Required reusable components:
+
+* Logo and wordmark.
+* Button variants.
+* Text input.
+* Search input.
+* Avatar.
+* Badge.
+* Tooltip.
+* Dialog and modal.
+* Dropdown menu.
+* Toast notification.
+* Navigation item.
+* Conversation row.
+* Message bubble.
+* Message composer.
+* Security status panel.
+* Device card.
+* Loading skeleton.
+* Empty state.
+* Error state.
+* Confirmation dialog.
+
+Define design tokens for:
+
+* Colors.
+* Typography.
+* Spacing.
+* Corner radii.
+* Shadows.
+* Borders.
+* Focus rings.
+* Motion.
+* Breakpoints.
+* Z-index layers.
+
+Use consistent spacing increments and typography scales.
+
+Build light-independent contrast rules suitable for the default dark theme. If a light theme is introduced, implement and test it as a complete theme rather than simply inverting colors.
+
+⸻
+
+13. ANIMATIONS AND MICRO-INTERACTIONS
+
+Use subtle, purposeful animation for:
+
+* Page transitions.
+* Navigation selection.
+* Button hover and press.
+* Dialog appearance.
+* Message arrival.
+* Loading indicators.
+* Connection state changes.
+* Logo illumination.
+* Background wave movement.
+
+Prefer CSS transitions and efficient transforms.
+
+Respect prefers-reduced-motion. Provide immediate interaction feedback and avoid animations that block essential actions.
+
+The app must remain smooth on ordinary mobile hardware.
+
+⸻
+
+14. ACCESSIBILITY AND RESPONSIVENESS
+
+Meet WCAG 2.2 AA accessibility goals where applicable.
+
+Requirements:
+
+* Semantic HTML.
+* Keyboard navigation.
+* Visible focus indicators.
+* Screen-reader labels.
+* Accessible dialogs and menus.
+* Sufficient color contrast.
+* Reduced-motion support.
+* Touch targets suitable for mobile.
+* Clear validation and error announcements.
+* Correct heading hierarchy.
+* Accessible message delivery feedback.
+
+Test the layout at:
+
+* 320 px mobile width.
+* 375–430 px mobile widths.
+* 768 px tablet width.
+* 1024 px compact desktop width.
+* 1440 px desktop width.
+* 1920 px wide desktop width.
+
+No horizontal overflow, overlapping controls, inaccessible menus, or clipped message composers.
+
+⸻
+
+15. PERFORMANCE AND RELIABILITY
+
+Optimize:
+
+* Initial load.
+* Route transitions.
+* Conversation rendering.
+* Message-list scrolling.
+* Bundle size.
+* Image delivery.
+* Database queries.
+* Reconnection behavior.
+* Resource cleanup.
+
+Use pagination or virtualization for long message histories where appropriate.
+
+Handle:
+
+* Slow network connections.
+* Offline mode.
+* Server errors.
+* Expired sessions.
+* Failed uploads.
+* Duplicate requests.
+* Reconnect attempts.
+* Empty databases.
+* Invalid input.
+* Interrupted cryptographic operations.
+
+Never silently discard messages or show a successful delivery indicator before the relevant operation has succeeded.
+
+⸻
+
+16. REQUIRED TESTING
+
+Do not consider the project complete because it compiles.
+
+Write and run tests for:
+
+UI tests
+
+* Landing page navigation.
+* Sign-in and account creation.
+* Conversation selection.
+* Search.
+* Message composition.
+* Responsive navigation.
+* Settings changes.
+* Error and empty states.
+
+Backend tests
+
+* Authentication.
+* Authorization.
+* Conversation membership.
+* Group membership changes.
+* Message persistence.
+* WebSocket authentication.
+* Rate limiting.
+* Session revocation.
+* Input validation.
+
+Cryptographic tests
+
+* Known-answer tests from the chosen libraries or protocol.
+* Encryption/decryption round trips.
+* Tampered ciphertext rejection.
+* Invalid authentication-tag rejection.
+* Invalid key handling.
+* Replay and duplicate handling.
+* Key rotation.
+* Device removal.
+* Identity verification failure.
+* Protocol interoperability where applicable.
+
+Security tests
+
+* Cross-user access attempts.
+* Unauthorized conversation access.
+* Expired session behavior.
+* WebSocket authorization bypass.
+* Injection attempts.
+* Cross-site request protections.
+* Secret leakage in logs.
+* Plaintext exposure in network and storage.
+* Dependency vulnerability checks.
+
+Use a browser automation framework such as Playwright for critical end-to-end flows, alongside Rust unit and integration tests if Rust is used.
+
+Never report tests as passed unless they have actually been executed. Clearly distinguish verified results from untested assumptions.
+
+⸻
+
+17. DELIVERY REQUIREMENTS
+
+Work directly in the provided project repository when available.
+
+Start by inspecting the existing project, identifying the framework, examining current functionality, and preserving useful working code.
+
+Then proceed in phases:
+
+Phase 1 — Inspect and plan
+
+* Understand the repository.
+* Identify existing routes, components, APIs, and tests.
+* Document architecture and implementation gaps.
+
+Phase 2 — Establish the design system
+
+* Implement colors, typography, spacing, surfaces, icons, and reusable components.
+* Create the responsive public landing page.
+* Reproduce the NULLWAVE visual identity.
+
+Phase 3 — Build the messaging experience
+
+* Implement desktop and mobile layouts.
+* Add authentication and onboarding.
+* Implement conversation lists, message history, composer, and navigation.
+
+Phase 4 — Implement backend functionality
+
+* Add database schema and migrations.
+* Build authenticated APIs.
+* Implement real-time messaging and device management.
+
+Phase 5 — Implement and verify security
+
+* Integrate established cryptographic implementations.
+* Document the threat model.
+* Implement identity verification and key lifecycle.
+* Test every security boundary.
+* Remove unsupported claims.
+
+Phase 6 — Verify and polish
+
+* Run tests, type checks, linting, and builds.
+* Fix layout and accessibility issues.
+* Verify responsive behavior.
+* Document configuration and deployment.
+
+Continue through the phases rather than stopping after producing a plan or a landing page.
+
+If an external service, API key, deployment credential, or required dependency is unavailable, implement the parts that can be completed locally and clearly document what remains blocked. Never fabricate integration results.
+
+⸻
+
+18. ACCEPTANCE CRITERIA
+
+The project is acceptable only when:
+
+1. The landing page closely follows the NULLWAVE reference design.
+2. The logo and visual identity are consistent throughout the application.
+3. Desktop and mobile layouts work responsively.
+4. Navigation and interactive controls function.
+5. Authentication connects to a real implementation or a clearly identified development substitute.
+6. Messages follow an implemented backend flow rather than a purely local visual simulation.
+7. Encryption claims correspond to actual cryptographic behavior.
+8. Device and contact verification states are truthful.
+9. Authorization is tested across security boundaries.
+10. Errors, loading, offline, and empty states are handled.
+11. The project builds and automated tests run successfully.
+12. Setup, architecture, security assumptions, and remaining limitations are documented.
+
+Final instruction
+
+Build NULLWAVE as a coherent, premium, security-conscious product — not a collection of disconnected screens.
+
+Prioritize the reference image’s dark navy surfaces, luminous cyan-blue-violet emblem, precise messaging layout, polished mobile onboarding, and subtle flowing-wave identity.
+
+At the same time, prioritize functional correctness, maintainable architecture, accessibility, and verifiable security over visual tricks.
+
+Never sacrifice real security for marketing language. Never simulate completed functionality without labeling it. Never claim an audit, test result, certification, encryption property, or privacy guarantee that has not been verified.
+
+The final result must be a runnable, testable application with an unmistakable NULLWAVE identity and a clear path from the marketing homepage to a functional encrypted messaging experience.
